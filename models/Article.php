@@ -52,15 +52,15 @@ class Article extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
+            'id' 					=> 'ID',
+            'title' 			=> 'Title',
             'description' => 'Description',
-            'content' => 'Content',
-            'date' => 'Date',
-            'image' => 'Image',
-            'viewed' => 'Viewed',
-            'user_id' => 'User ID',
-            'status' => 'Status',
+            'content' 		=> 'Content',
+            'date' 				=> 'Date',
+            'image' 			=> 'Image',
+            'viewed' 			=> 'Viewed',
+            'user_id' 		=> 'User ID',
+            'status' 			=> 'Status',
             'category_id' => 'Category ID',
         ];
     }
@@ -82,5 +82,17 @@ class Article extends \yii\db\ActiveRecord
 		public function beforeDelete() {
 			$this->deleteImage();
 			return parent::beforeDelete();
+		}
+
+		public function getCategory() {
+			return $this->hasOne(Category::className(), ['id' => 'category_id']);
+		}
+
+		public function saveCategory($category_id) {
+			$category = Category::findOne($category_id);
+			if($category != null) {
+				$this->link('category', $category);
+				return true;
+			}
 		}
 }
