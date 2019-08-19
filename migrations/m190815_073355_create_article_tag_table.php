@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%acticle_tag}}`.
+ * Handles the creation of table `{{%article_tag}}`.
  */
-class m190815_073355_create_acticle_tag_table extends Migration
+class m190815_073355_create_article_tag_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -54,6 +54,6 @@ class m190815_073355_create_acticle_tag_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%acticle_tag}}');
+        $this->dropTable('{{%article_tag}}');
     }
 }

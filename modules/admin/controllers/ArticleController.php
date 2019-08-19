@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 use app\models\Category;
+use app\models\Tag;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -168,6 +169,26 @@ class ArticleController extends Controller
 				'article' => $article,
 				'selected' => $selected,
 				'categories' => $categories
+			]);
+		}
+
+		public function actionSetTags($id) {
+			$tag = Tag::findOne($id);
+
+			$article = $this->findModel($id);
+			$selectedTags = $article->getSelectedTags();
+			
+			$tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
+
+			if(Yii::$app->request->isPost) {
+				$tags = Yii::$app->request->post('tags');
+				$article->saveTags($tags);
+				return $this->redirect(['view', 'id' => $article->id]);
+			}
+			
+			return $this->render('tags', [
+				'tags' => $tags,
+				'selectedTags' => $selectedTags, 
 			]);
 		}
 }
