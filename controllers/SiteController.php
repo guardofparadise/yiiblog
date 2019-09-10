@@ -12,6 +12,8 @@ use app\models\ContactForm;
 
 use yii\data\Pagination;
 use app\models\Country;
+use app\models\Article;
+use app\models\Category;
 
 class SiteController extends Controller
 {
@@ -64,21 +66,26 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-				$query = Country::find();
-				
-				$pagination = new Pagination([
-					'defaultPageSize' => 5,
-					'totalCount' => $query->count(),
-				]);
+			$query = Article::find();
 
-				$countries = $query->orderBy('name')
-					->offset($pagination->offset)
-					->limit($pagination->limit)
-					->all();
+			$count = $query->count();
+
+			$pagination = new Pagination(['totalCount' => $count, 'pageSize' => 1]);
+
+			$articles = $query->offset($pagination->offset)
+				->limit($pagination->limit)
+				->all();
+
+			$popular    = Article::find()->orderBy('viewed desc')->limit(3)->all();
+			$recent     = Article::find()->orderBy('date desc')->limit(4)->all();
+			$categories = Category::find()->all();
 
 				return $this->render('index', [
-					'countries' => $countries,
-					'pagination' => $pagination
+					'articles' => $articles,
+					'pagination' => $pagination,
+					'popular' => $popular,
+					'recent'  => $recent,
+					'categories' => $categories
 				]);
     }
 
@@ -145,10 +152,46 @@ class SiteController extends Controller
 		}
 		
 		public function actionSingle() {
+
 			return $this->render('single');
 		}
 
-		public function actionCategory() {
-			return $this->render('category');
+		public function actionCategory($id) {
+			$query = Article::find()->where(['category_id' => $id]);
+
+			$count = $query->count();
+
+			$pagination = new Pagination(['totalCount' => $count, 'pageSize' => 6]);
+
+			$articles = $query->offset($pagination->offset)
+				->limit($pagination->limit)
+				->all();
+
+				$popular    = Article::find()->orderBy('viewed desc')->limit(3)->all();
+				$recent     = Article::find()->orderBy('date desc')->limit(4)->all();
+				$categories = Category::find()->all();
+
+
+			return $this->render('category', [
+				'articles' => $articles,
+				'pagination' => $pagination,
+				'popular' => $popular,
+				'recent'  => $recent,
+				'categories' => $categories
+			]);
+		}
+
+		public function actionView($id) {
+			$article = Article::findOne($id);
+			$popular    = Article::find()->orderBy('viewed desc')->limit(3)->all();
+			$recent     = Article::find()->orderBy('date desc')->limit(4)->all();
+			$categories = Category::find()->all();
+
+			return $this->render('single', [
+				'article' => $article,
+				'popular' => $popular,
+				'recent'  => $recent,
+				'categories' => $categories
+			]);
 		}
 }

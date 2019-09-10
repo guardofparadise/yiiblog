@@ -107,6 +107,10 @@ class Article extends \yii\db\ActiveRecord
 			return ArrayHelper::getColumn($selectedTags, 'id');
 		}
 
+		public function getDate() {
+			return Yii::$app->formatter->asDate($this->date);
+		}
+
 		public function saveTags($tags) {
 			if(is_array($tags)) {
 
